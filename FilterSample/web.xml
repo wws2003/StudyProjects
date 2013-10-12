@@ -5,8 +5,6 @@
    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
    version="2.5"> 
 
-<web-app>
-
   <context-param>
     <param-name>cookie_expire_time</param-name>
     <param-value>
@@ -17,14 +15,14 @@
   <context-param>
     <param-name>authenticated_redirect</param-name>
     <param-value>
-	/mypage.do
+	secure/mypage.do
     </param-value>
   </context-param>
 
   <context-param>
     <param-name>noauthenticated_forward</param-name>
     <param-value>
-	/login.do
+	jsp/login.jsp
     </param-value>
   </context-param>
 
@@ -45,7 +43,7 @@
 
   <servlet-mapping>
     <servlet-name>userPageServlet</servlet-name>
-    <url-pattern>/mypage.do</url-pattern>
+    <url-pattern>/secure/mypage.do</url-pattern>
   </servlet-mapping>
 
   <filter>
@@ -65,7 +63,7 @@
 
   <filter-mapping>
     <filter-name>secureFilter</filter-name>	
-    <url-pattern>/mypage/*</url-pattern>
+    <url-pattern>/secure/*</url-pattern>
   </filter-mapping>
 
 </web-app>   
