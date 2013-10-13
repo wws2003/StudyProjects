@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class SecureServletFilter implements Filter {
 
@@ -25,6 +26,9 @@ public class SecureServletFilter implements Filter {
 			FilterChain filterChain) throws IOException, ServletException {
 		try {
 			boolean isAuthenticated = false;
+
+			HttpSession session = ((HttpServletRequest)request).getSession();
+			System.out.println(session.getId() + " " + session.isNew() + " " + session.getCreationTime() + " " + session.getLastAccessedTime() + " " + session.getMaxInactiveInterval());
 			
 			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 			if(cookies != null) {
@@ -35,7 +39,7 @@ public class SecureServletFilter implements Filter {
 					}
 				}
 			}
-			
+
 			if(isAuthenticated)
 				filterChain.doFilter(request, response);
 			else {

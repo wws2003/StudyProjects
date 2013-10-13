@@ -7,6 +7,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class AuthenticateServlet extends HttpServlet {
 
@@ -35,14 +36,15 @@ public class AuthenticateServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		isAuthenticated = (userName .equals( "demo") && password .equals( "demo"));
 		
+		HttpSession session = request.getSession();
+		
 		//If authentication succeeds, redirect to user page servlet
 		if (isAuthenticated) {
 			Cookie authCookie = new Cookie("user", userName);
 			authCookie.setMaxAge(cookie_expire_time);
 			response.addCookie(authCookie);
 			response.sendRedirect(authenticated_redirect);
-			//request.getRequestDispatcher(authenticated_forward).forward(request, response);
-			
+			session.setAttribute("myname", userName);
 			//TODO: Redirect to the page user requested before forced to login
 		}
 		else {

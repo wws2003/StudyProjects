@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class UserPageServlet extends HttpServlet {
 
@@ -23,8 +24,13 @@ public class UserPageServlet extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
-		//TODO Get user info via submitted cookie and do something meaningful !
-		response.getWriter().write("TODO Get user info via submitted cookie and do something meaningful");
+		//TODO Apply session to retrieve user info such as name
+		
+		HttpSession session = request.getSession();
+		String myName = (String) session.getAttribute("myname");
+		
+		request.setAttribute("myname", myName);
+		request.getRequestDispatcher("/jsp/mypage.jsp").forward(request, response);
 	}
 
 }
