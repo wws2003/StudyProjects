@@ -11,7 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 public class SecureServletFilter implements Filter {
 
@@ -27,9 +26,6 @@ public class SecureServletFilter implements Filter {
 		try {
 			boolean isAuthenticated = false;
 
-			HttpSession session = ((HttpServletRequest)request).getSession();
-			System.out.println(session.getId() + " " + session.isNew() + " " + session.getCreationTime() + " " + session.getLastAccessedTime() + " " + session.getMaxInactiveInterval());
-			
 			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 			if(cookies != null) {
 				for(Cookie cookie : cookies) {
@@ -43,7 +39,9 @@ public class SecureServletFilter implements Filter {
 			if(isAuthenticated)
 				filterChain.doFilter(request, response);
 			else {
-				//The path to the jsp file should never be displayed to user -> use forward instead of sendRedirect
+							/**
+				 * The path to the jsp file should never be displayed to user -> use forward instead of sendRedirect
+				 */
 				String path = "/jsp/login.jsp";
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher(path);
 				requestDispatcher.forward(request, response);

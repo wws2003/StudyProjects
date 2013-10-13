@@ -14,20 +14,29 @@ public class UserPageServlet extends HttpServlet {
 	 *This servlet is in service if user successfully authenticated.
 	 * It renders values to the jsp page which will be displayed  to user  
 	 */
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Override
 	public void init() {
-		
+
 	}
-	
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
-		//TODO Apply session to retrieve user info such as name
+
+		String myName = "No one";
 		
-		HttpSession session = request.getSession();
-		String myName = (String) session.getAttribute("myname");
+		try {
+			HttpSession session = request.getSession(false);
+			myName = (String) session.getAttribute("myname");
+		}
+		catch(IllegalStateException ise) {
+			ise.printStackTrace();
+		}
+		catch(NullPointerException npe) {
+			System.out.println("Session expired");
+		}
 		
 		request.setAttribute("myname", myName);
 		request.getRequestDispatcher("/jsp/mypage.jsp").forward(request, response);

@@ -14,20 +14,19 @@ public class AuthenticateServlet extends HttpServlet {
 	/**
 	 * This servlet is in service when user submit the login form 
 	 */
-	
+
 	private static final long serialVersionUID = 1340545037755913046L;
 	private int cookie_expire_time;
 	private  String authenticated_redirect;
 	private  String noauthenticated_forward;
-	
+
 	@Override
 	public void init() {
-		//TODO Read servlet configuration for the value of expire_time
 		cookie_expire_time = Integer.valueOf(getServletContext().getInitParameter("cookie_expire_time"));
 		authenticated_redirect = getServletContext().getInitParameter("authenticated_redirect");
 		noauthenticated_forward = getServletContext().getInitParameter("noauthenticated_forward");
 	}
-	
+
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		//Check submitted user name and password
@@ -35,20 +34,31 @@ public class AuthenticateServlet extends HttpServlet {
 		String userName = request.getParameter("user");
 		String password = request.getParameter("password");
 		isAuthenticated = (userName .equals( "demo") && password .equals( "demo"));
-		
-		HttpSession session = request.getSession();
-		
-		//If authentication succeeds, redirect to user page servlet
+
+		/**
+		 * If authentication succeeds, redirect to user page servlet
+		 */
 		if (isAuthenticated) {
+			/**
+			 * Create a new session each time user login successfully a secure page
+			 */
+			HttpSession session = ((HttpServletRequest)request).getSession(true);
+			session.setMaxInactiveInterval(20);
+			System.out.println(session.getId() + " " + session.isNew() + " " + session.getCreationTime() + " " + session.getLastAccessedTime() + " " + session.getMaxInactiveInterval());
+
 			Cookie authCookie = new Cookie("user", userName);
 			authCookie.setMaxAge(cookie_expire_time);
 			response.addCookie(authCookie);
+			try {
+				session.setAttribute("myname", userName);
+			}
+			catch(IllegalStateException ise) {
+				ise.printStackTrace();
+			}
 			response.sendRedirect(authenticated_redirect);
-			session.setAttribute("myname", userName);
 			//TODO: Redirect to the page user requested before forced to login
 		}
 		else {
-			//response.sendRedirect(noauthenticated_redirect);
 			request.getRequestDispatcher(noauthenticated_forward).forward(request, response);
 		}
 	}

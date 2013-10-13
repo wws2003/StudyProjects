@@ -8,7 +8,7 @@
   <context-param>
     <param-name>cookie_expire_time</param-name>
     <param-value>
-	10
+	300
     </param-value>
   </context-param>
 
