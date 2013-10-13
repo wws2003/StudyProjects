@@ -29,9 +29,9 @@ public class SecureServletFilter implements Filter {
 			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 			if(cookies != null) {
 				for(Cookie cookie : cookies) {
+					System.out.println("Cookie:" + cookie.getName());
 					if(cookie.getName() .equals("user")) {
 						isAuthenticated = true;
-						break;
 					}
 				}
 			}
@@ -39,7 +39,7 @@ public class SecureServletFilter implements Filter {
 			if(isAuthenticated)
 				filterChain.doFilter(request, response);
 			else {
-							/**
+				/**
 				 * The path to the jsp file should never be displayed to user -> use forward instead of sendRedirect
 				 */
 				String path = "/jsp/login.jsp";

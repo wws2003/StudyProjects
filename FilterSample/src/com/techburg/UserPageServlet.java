@@ -29,6 +29,7 @@ public class UserPageServlet extends HttpServlet {
 		
 		try {
 			HttpSession session = request.getSession(false);
+			System.out.println(session.getId() + " " + session.isNew() + " " + session.getCreationTime() + " " + session.getLastAccessedTime() + " " + session.getMaxInactiveInterval());
 			myName = (String) session.getAttribute("myname");
 		}
 		catch(IllegalStateException ise) {
