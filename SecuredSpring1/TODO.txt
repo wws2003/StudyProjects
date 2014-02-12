@@ -1,0 +1,1 @@
+Using spring security to require user to login before access to hello web app. Username and password should be stored in a extensible table in a DB. Signup not required yet

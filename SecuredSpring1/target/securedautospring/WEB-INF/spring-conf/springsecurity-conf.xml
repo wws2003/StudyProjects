@@ -1,0 +1,126 @@
+<beans xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.1.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:component-scan base-package="com.techburg.securedautospring" />
+	<context:annotation-config />
+
+	<!-- <sec> <http> </http> </sec> <sec authentication-manager-ref="authenticationManager"> 
+		</sec> -->
+
+	<alias name="filterChainProxy" alias="springSecurityFilterChain" />
+
+	<!-- FilterChainProxy config -->
+	<bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+		<constructor-arg>
+			<util:list>
+				<sec:filter-chain pattern="/public/*" filters="none" />
+				<sec:filter-chain pattern="/auth/login" filters="none" />
+				<sec:filter-chain pattern="/auth/*"
+					filters="securityContextFilter,exceptionTranslateFilter,formLoginFilter,accessControlFilter" />
+				<sec:filter-chain pattern="/secure/*"
+					filters="securityContextFilter,exceptionTranslateFilter,accessControlFilter" />
+			</util:list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Security context storing filter -->
+	<bean id="securityContextFilter"
+		class="org.springframework.security.web.context.SecurityContextPersistenceFilter">
+		<property name="securityContextRepository" ref="securityContextRepository" />
+	</bean>
+
+	<!-- Username-password form submission filter, for secured urls -->
+	<bean id="formLoginFilter"
+		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="filterProcessesUrl" value="/auth/j_spring_security_check"></property>
+		<property name="authenticationSuccessHandler">
+			<bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<property name="alwaysUseDefaultTargetUrl" value="false" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- AuthenticationEntryPoint -->
+	<bean id="exceptionTranslateFilter"
+		class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		
+		<!-- TODO Create constructor configuration -->
+		<constructor-arg index="0">
+			<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+				<property name="loginFormUrl" value="/auth/login" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<bean id="requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"></bean>
+		</constructor-arg>
+		
+	</bean>
+
+	<!-- Security interceptor, does the role of exception thrower -->
+	<bean id="accessControlFilter"
+		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="securityMetadataSource">
+			<sec:filter-security-metadata-source>
+				<sec:intercept-url pattern="/secure/extreme/*"
+					access="ROLE_SUPERVISOR" />
+				<sec:intercept-url pattern="/secure/**"
+					access="IS_AUTHENTICATED_FULLY" />
+				<sec:intercept-url pattern="/auth/**" access="ROLE_ANONYMOUS" />
+				<sec:intercept-url pattern="/**" access="ROLE_USER" />
+			</sec:filter-security-metadata-source>
+		</property>
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="accessDecisionManager" ref="accessDecisionManager" />
+	</bean>
+
+	<bean id="securityContextRepository"
+		class="org.springframework.security.web.context.HttpSessionSecurityContextRepository">
+	</bean>
+
+	<!-- AuthenticationManager -->
+	<bean id="authenticationManager"
+		class="org.springframework.security.authentication.ProviderManager">
+		<property name="providers">
+			<list>
+				<ref bean="customAuthenticationProvider" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- AuthenticationProvider -->
+	<bean id="customAuthenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService">
+			<ref bean="customUserDetailService" />
+		</property>
+	</bean>
+
+	<!-- UserDetailsService -->
+	<bean id="customUserDetailService"
+		class="com.techburg.securedautospring.service.UserDetailsServiceImpl">
+	</bean>
+
+	<!-- Access decision manager -->
+	<bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+		<property name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.access.vote.RoleVoter" />
+				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+			</list>
+		</property>
+	</bean>
+
+</beans>
