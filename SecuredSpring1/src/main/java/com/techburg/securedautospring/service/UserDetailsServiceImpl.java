@@ -12,7 +12,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	public UserDetails loadUserByUsername(String arg0)
 			throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		System.out.println("Going to load User by name " + arg0);
+		System.out.println("Going to load an User by name " + arg0);
 		if("demo".equals(arg0)) {
 			System.out.println("A UserDetails instance to be created");
 			return new UserDetailsImpl();
