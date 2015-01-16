@@ -7,21 +7,23 @@
 	<property name="lib" value="lib"/>
 	<property name="src.dir.resources" value="resources"/>
 	<property name="src.dir.inf" value="WEB-INF"/>
-	<property name="src.dir.inf.jsp" value="${src.dir.inf}/jsp"/>
+	<property name="src.dir.jsp" value="jsp"/>
 	<property name="src.dir.inf.webxml" value="${src.dir.inf}/web.xml"/>
-	<property name="web.dir" value="target/war"/>
+	<property name="target.dir" value="target"/>
+	<property name="web.dir" value="${target.dir}/war"/>
 	<property name="web.dir.resources" value="${web.dir}/resources"/>
 	<property name="web.dir.inf" value="${web.dir}/WEB-INF"/>
-	<property name="web.dir.inf.jsp" value="${web.dir.inf}/jsp"/>
+	<property name="web.dir.jsp" value="${web.dir}/jsp"/>
 	<property name="web.dir.inf.classes" value="${web.dir.inf}/classes"/>
 	<property name="web.dir.inf.lib" value="${web.dir.inf}/lib"/>
-	<property name="web.app.name" value="target/agents-app.war"/>
+	<property name="web.app.name" value="${target.dir}/agents-app.war"/>
 	
     <path id="MA_WebApp.classpath">
         <pathelement location="bin/"/>
-        <pathelement location="lib/jsp-api-2.1.jar"/>
+        <pathelement location="lib/jsp-api.jar"/>
         <pathelement location="lib/jstl-api-1.2.jar"/>
-        <pathelement location="lib/servlet-api-2.5.jar"/>
+        <pathelement location="lib/jstl-impl-1.2.jar"/>
+        <pathelement location="lib/servlet-api.jar"/>
         <pathelement location="lib/commons-fileupload-1.2.2.jar"/>
         <pathelement location="lib/commons-io-1.4.jar"/>
         <pathelement location="lib/log4j-1.2.14.jar"/>
@@ -58,7 +60,7 @@
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
 
 	<target name="clean-war">
-		<delete dir="${web.dir}"/>
+		<delete dir="${target.dir}"/>
 	</target>
 	
 	<target name="init-war">
@@ -87,17 +89,21 @@
 			<fileset dir="${src.dir.resources}">
 			</fileset>
 		</copy>
-		<copy todir="${web.dir.inf.jsp}" overwrite="true">
-			<fileset dir="${src.dir.inf.jsp}">
+		<copy todir="${web.dir.jsp}" overwrite="true">
+			<fileset dir="${src.dir.jsp}">
 			</fileset>
 		</copy>
 	</target>
 	
 	<target name="package-war">
 		<war destfile="${web.app.name}" webxml="${web.dir.inf}/web.xml">
-			<fileset dir="${web.dir.inf.jsp}"/>
-			<fileset dir="${web.dir.resources}"/>
+			<fileset dir="${web.dir}">
+				<include name="jsp/**"/>
+				<include name="resources/**"/>
+			</fileset>
 			<lib dir="${web.dir.inf.lib}">
+				<exclude name="jsp-api.jar"/>
+				<exclude name="servlet-api.jar"/>
 			</lib>
 			<classes dir="${web.dir.inf.classes}"/>
 		</war>
