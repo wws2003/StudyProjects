@@ -99,7 +99,16 @@ $(document).ready(function() {
 						gNEProblem.addPreferenceToUtilityMap($(row));
 					}				
 				});
-				console.log(JSON.stringify(gNEProblem));
+				var requestString = JSON.stringify(gNEProblem);
+				var url = "/agents-app/solve.do";
+				$.ajax({
+				  type: "POST",
+				  url: url,
+				  data: {"problem" : requestString},
+				  success: function (data, txtStatus, jqXHR) {
+				  		console.log(data);
+				  },
+				});
 			}
 		});
 });
