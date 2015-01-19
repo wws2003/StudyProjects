@@ -2,9 +2,10 @@
 <project basedir="." default="build" name="MA_WebApp">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
 	<property name="lib" value="lib"/>
+	<property name="dependencies" value="dependencies"/>
 	<property name="src.dir" value="webapp"/>
 	<property name="src.dir.resources" value="${src.dir}/resources"/>
 	<property name="src.dir.inf" value="${src.dir}/WEB-INF"/>
@@ -28,6 +29,7 @@
         <pathelement location="lib/commons-fileupload-1.2.2.jar"/>
         <pathelement location="lib/commons-io-1.4.jar"/>
         <pathelement location="lib/log4j-1.2.14.jar"/>
+        <pathelement location="lib/json-simple-1.1.1.jar"/>
     </path>
 	
     <target name="init">
@@ -71,6 +73,8 @@
 		<mkdir dir="${web.dir.inf.classes}"/>
 		<copy todir="${web.dir.inf.lib}" overwrite="true">
 			<fileset dir="${lib}">
+			</fileset>
+			<fileset dir="${dependencies}">
 			</fileset>
 		</copy>
 		<copy file="${src.dir.inf.webxml}" todir="${web.dir.inf}">

@@ -10,7 +10,7 @@ public class MyGenericServlet extends GenericServlet {
 	//read the field corpName value when initialized
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
-		corpName = servletConfig.getInitParameter("corpName");
+		corpName = servletConfig.getInitParameter("LectureName");
 	}
 
 	//Simply return a string "It works"

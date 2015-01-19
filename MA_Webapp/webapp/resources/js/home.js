@@ -66,6 +66,7 @@ function createNewPrefBtnRow(numberOfAgent) {
 }
 	
 function showNewPreferenceRow($btn, numberOfAgent) {
+	applyResultsToRows([]);
 	$new_pref_row = createPreferenceRow(numberOfAgent, getNumberOfPreferences() + 1);
 	$btn.parent().parent().before($new_pref_row);
 }
@@ -73,6 +74,60 @@ function showNewPreferenceRow($btn, numberOfAgent) {
 function getNumberOfPreferences() {
 	var $table = $("#tbl_util");
 	return $table.find("tr").length - 2;
+}
+
+function preSubmitPost () {
+	if (gNEProblem != null) {
+		fillEmptyCells();
+		
+		gNEProblem.clear();
+		reconstructNEProblem();
+		
+		var emptyResults = [];
+		applyResultsToRows(emptyResults);
+	}
+}
+
+function showResult(data) {
+	console.log(data);
+	var resultRows = [1, 2]; //TODO Parse from returned data instead of hard code
+	applyResultsToRows(resultRows);
+}
+
+function fillEmptyCells() {
+	$("#tbl_util td>input").each(function (index, input) {
+			if ($(input).val() == "") {
+				$(input).val(0);
+			}				
+	});
+}
+
+function reconstructNEProblem() {
+	var numberOfPreference = getNumberOfPreferences();
+	$("#tbl_util tr").each(function (index, row) {
+		if (index >= 1 && index <= numberOfPreference) {
+			console.log("Add new preference");
+			gNEProblem.addPreferenceToUtilityMap($(row));
+		}				
+	});
+}
+
+function applyResultsToRows(resultRows) {
+	var numberOfPreference = getNumberOfPreferences();
+	$("#tbl_util tr").each(function (index, row) {
+			if (index >= 1 && index <= numberOfPreference) {
+				if (resultRows.indexOf(index) != -1) {
+					$(row).children().each(function (index, cell) {
+						$(cell).addClass("result-cell");
+					});
+				}
+				else {
+					$(row).children().each(function (index, cell) {
+						$(cell).removeClass("result-cell");
+					});
+				}
+			}				
+	});
 }
 
 $(document).ready(function() {
@@ -91,14 +146,7 @@ $(document).ready(function() {
 		
 		$("#btn_submit").click(function () {
 			if (gNEProblem != null) {
-				var numberOfPreference = getNumberOfPreferences();
-				console.log(numberOfPreference);
-				$("#tbl_util tr").each(function (index, row) {
-					if (index >= 1 && index <= numberOfPreference) {
-						console.log("Add new preference");
-						gNEProblem.addPreferenceToUtilityMap($(row));
-					}				
-				});
+				preSubmitPost();
 				var requestString = JSON.stringify(gNEProblem);
 				var url = "/agents-app/solve.do";
 				$.ajax({
@@ -106,7 +154,7 @@ $(document).ready(function() {
 				  url: url,
 				  data: {"problem" : requestString},
 				  success: function (data, txtStatus, jqXHR) {
-				  		console.log(data);
+				  		showResult(data);
 				  },
 				});
 			}

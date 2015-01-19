@@ -9,8 +9,8 @@
     <servlet-name>defaultServlet</servlet-name>
     <servlet-class>edu.rits.ma.webapp.servlet.MyGenericServlet</servlet-class>
   	<init-param>
-			<param-name>corpName</param-name>
-			<param-value>Techburg</param-value>
+			<param-name>LectureName</param-name>
+			<param-value>Multi-agents system</param-value>
 	</init-param>
   </servlet>
   

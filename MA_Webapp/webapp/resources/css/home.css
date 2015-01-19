@@ -19,3 +19,7 @@
 #tbl_util input[type="text"] {
 	width: 55px;
 }
+
+#tbl_util td.result-cell {
+	background-color: #F6CECE;
+}

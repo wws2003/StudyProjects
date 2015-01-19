@@ -52,3 +52,7 @@ NashEquilibriumProblem.prototype.addPreferenceToUtilityMap = function($row) {
 	this.utilityMap = utilityMap;
 }
 
+NashEquilibriumProblem.prototype.clear = function () {
+	this.preferences.splice(0, this.preferences.length);
+	this.utilityMap = {};
+}
